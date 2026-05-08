@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>母亲节快乐 · 献给姚耐霞</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "楷体", "KaiTi", "华文楷体", "STKaiti", "宋体", "SimSun", "Noto Serif SC", serif;
+            background: #fef9f4;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ========== 飘落花瓣背景 ========== */
+        .petals-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .petal {
+            position: absolute;
+            top: -60px;
+            animation: petalFall linear forwards;
+            pointer-events: none;
+            font-size: 1.4rem;
+            opacity: 0.7;
+        }
+
+        @keyframes petalFall {
+            0% {
+                transform: translateY(0) rotate(0deg) translateX(0);
+                opacity: 0.8;
+            }
+            25% {
+                transform: translateY(20vh) rotate(90deg) translateX(30px);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(50vh) rotate(180deg) translateX(-20px);
+                opacity: 0.4;
+            }
+            75% {
+                transform: translateY(75vh) rotate(270deg) translateX(15px);
+                opacity: 0.2;
+            }
+            100% {
+                transform: translateY(105vh) rotate(360deg) translateX(-10px);
+                opacity: 0;
+            }
+        }
+
+        /* ========== 卡片容器（翻转不需要perspective在这里） ========== */
+        .scene {
+            width: 90%;
+            max-width: 420px;
+            height: 520px;
+            perspective: 1200px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* 正面和背面共用 */
+        .card-front,
+        .card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            box-shadow: 0 12px 32px rgba(180, 130, 110, 0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 正面样式 */
+        .card-front {
+            background: linear-gradient(135deg, #ffede0 0%, #fff0e5 100%);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .card-front .cover-icon {
+            font-size: 3.8rem;
+            margin-bottom: 0.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .cover-text {
+            font-size: 1.6rem;
+            color: #b45f4a;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin: 0.8rem 0;
+        }
+
+        .cover-sub {
+            font-size: 0.95rem;
+            color: #a98467;
+            margin-top: 0.3rem;
+        }
+
+        .click-hint {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: #cda98b;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* 背面样式（必须旋转180度并隐藏背面） */
+        .card-back {
+            background: #fffaf5;
+            transform: rotateY(180deg);
+            padding: 2rem 1.8rem;
+            text-align: center;
+        }
+
+        /* 照片框 */
+        .photo-frame {
+            width: 115px;
+            height: 115px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #f5d5c6;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 6px 16px rgba(160, 120, 100, 0.2);
+            background: #fae9dd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photo-placeholder {
+            font-size: 2.8rem;
+            color: #dbb9a3;
+        }
+
+        .greeting {
+            color: #5a3e32;
+            line-height: 2;
+            font-size: 1.05rem;
+        }
+
+        .greeting h3 {
+            font-size: 1.5rem;
+            color: #b45f4a;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+        }
+
+        .signature {
+            margin-top: 0.8rem;
+            font-style: italic;
+            color: #8b5e4b;
+        }
+
+        .date {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #b6977c;
+        }
+
+        /* ========== 音乐按钮 ========== */
+        .music-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 20;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: #fae2d3;
+            color: #b45f4a;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(160, 120, 100, 0.2);
+            transition: all 0.3s;
+            opacity: 0.9;
+        }
+
+        .music-btn.playing {
+            background: #f5cbbb;
+        }
+
+        @media (max-width: 450px) {
+            .scene {
+                height: 480px;
+            }
+            .cover-icon {
+                font-size: 3rem;
+            }
+            .cover-text {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 飘落花瓣 -->
+    <div class="petals-container" id="petalsContainer"></div>
+
+    <!-- 翻转容器（新结构） -->
+    <div class="scene">
+        <div class="card" id="card">
+            <div class="card-front">
+                <div class="cover-icon">💐</div>
+                <div class="cover-text">给我的妈妈</div>
+                <div class="cover-sub">姚耐霞 女士</div>
+                <div class="click-hint">🌸 轻轻点一下，打开贺卡</div>
+            </div>
+            <div class="card-back">
+                <div class="photo-frame" id="photoFrame">
+                    <!-- 照片：默认隐藏，用占位符。修改下面img的src后会自动替换 -->
+                    <img id="userPhoto" src="" alt="妈妈的照片" style="display: none;">
+                    <div class="photo-placeholder" id="photoPlaceholder">👩‍👦</div>
+                </div>
+
+                <div class="greeting">
+                    <h3>🌷 母亲节快乐</h3>
+                    <p>亲爱的妈妈：</p>
+                    <p>你是我生命里最温柔的光。</p>
+                    <p>谢谢你用皱纹和白发，<br>换我无忧长大。</p>
+                    <p>愿你永远健康，永远年轻，<br>被世界温柔相待。</p>
+                    <p class="signature">——爱你的 田亮</p>
+                </div>
+                <div class="date">🌿 母亲节 · 2026</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 音乐按钮 -->
+    <button class="music-btn" id="musicToggle" title="音乐开关">🎵</button>
+
+    <script>
+        // ==================== 花瓣飘落 ====================
+        (function() {
+            const container = document.getElementById('petalsContainer');
+            const petals = ['🌸', '🌷', '💮', '🌼', '🌺', '🌻', '🌿', '🍃'];
+
+            function createPetal() {
+                const petal = document.createElement('span');
+                petal.classList.add('petal');
+                petal.textContent = petals[Math.floor(Math.random() * petals.length)];
+                petal.style.left = Math.random() * 100 + '%';
+                petal.style.fontSize = (1.2 + Math.random() * 2) + 'rem';
+                petal.style.animationDuration = (7 + Math.random() * 10) + 's';
+                petal.style.animationDelay = Math.random() * 4 + 's';
+                container.appendChild(petal);
+                setTimeout(() => {
+                    if (petal.parentNode) petal.parentNode.removeChild(petal);
+                }, 15000);
+            }
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => createPetal(), i * 300);
+            }
+            setInterval(createPetal, 2200);
+        })();
+
+        // ==================== 卡片翻转 ====================
+        const card = document.getElementById('card');
+        let isFlipped = false;
+
+        card.addEventListener('click', () => {
+            if (!isFlipped) {
+                card.classList.add('flipped');
+                isFlipped = true;
+                // 自动播放音乐
+                if (musicToggle.classList.contains('playing') === false) {
+                    musicToggle.click();
+                }
+            }
+            // 如果想点背面返回正面，可以加上翻回逻辑，但贺卡一般只翻开一次，保留现状
+        });
+
+        // ==================== 轻音乐 ====================
+        let audioCtx = null;
+        let isPlaying = false;
+        const musicToggle = document.getElementById('musicToggle');
+
+        function playSimpleMelody() {
+            if (!audioCtx) {
+                audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+            }
+            const now = audioCtx.currentTime;
+            const oscType = 'sine';
+            const gainNode = audioCtx.createGain();
+            gainNode.connect(audioCtx.destination);
+            gainNode.gain.setValueAtTime(0.12, now);
+
+            const notes = [
+                { freq: 523.25, duration: 0.5 },
+                { freq: 523.25, duration: 0.5 },
+                { freq: 587.33, duration: 0.5 },
+                { freq: 587.33, duration: 0.5 },
+                { freq: 659.25, duration: 0.5 },
+                { freq: 659.25, duration: 0.5 },
+                { freq: 587.33, duration: 1.0 },
+                { freq: 554.37, duration: 0.5 },
+                { freq: 554.37, duration: 0.5 },
+                { freq: 493.88, duration: 0.5 },
+                { freq: 493.88, duration: 0.5 },
+                { freq: 440.00, duration: 0.5 },
+                { freq: 440.00, duration: 0.5 },
+                { freq: 392.00, duration: 1.0 },
+            ];
+
+            let timeOffset = now;
+            notes.forEach(n => {
+                const osc = audioCtx.createOscillator();
+                const noteGain = audioCtx.createGain();
+                osc.type = oscType;
+                osc.frequency.setValueAtTime(n.freq, timeOffset);
+                noteGain.gain.setValueAtTime(0.12, timeOffset);
+                noteGain.gain.exponentialRampToValueAtTime(0.001, timeOffset + n.duration);
+                osc.connect(noteGain);
+                noteGain.connect(audioCtx.destination);
+                osc.start(timeOffset);
+                osc.stop(timeOffset + n.duration);
+                timeOffset += n.duration;
+            });
+
+            setTimeout(() => {
+                if (isPlaying) playSimpleMelody();
+            }, timeOffset * 1000 - now * 1000 + 300);
+        }
+
+        musicToggle.addEventListener('click', () => {
+            if (isPlaying) {
+                isPlaying = false;
+                musicToggle.classList.remove('playing');
+                musicToggle.textContent = '🎵';
+                if (audioCtx) {
+                    audioCtx.close().then(() => { audioCtx = null; });
+                }
+            } else {
+                isPlaying = true;
+                musicToggle.classList.add('playing');
+                musicToggle.textContent = '🔊';
+                playSimpleMelody();
+            }
+        });
+
+        // ==================== 照片替换 ====================
+        // 把下面三行的注释去掉，并把文件名或链接改成您的照片！
+        const userPhoto = document.getElementById('userPhoto');
+        const placeholder = document.getElementById('photoPlaceholder');
+        userPhoto.src = "mom.jpg";            // 改成您的照片文件名或链接
+        userPhoto.style.display = "block";
+        placeholder.style.display = "none";
+    </script>
+</body>
+</html>
